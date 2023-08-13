@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.homework.consol.CategoryMapper">
+
+    <resultMap id="selectResultMap" type="com.homework.consol.CategoryDTO">
+        <id property="code" column="RESTAURANT_CODE"/>
+        <id property="areaCode" column="AREA_CODE"/>
+        <id property="name" column="RESTAURANT_NAME"/>
+        <id property="type" column="RESTAURANT_TYPE"/>
+        <id property="step" column="VEGETAIAN_STEP"/>
+        <id property="menu" column="BEST_MENU"/>
+        <id property="orderableStatus" column="OPEN_SCHEDULE"/>
+    </resultMap>
+
+    <select id="selectAllRestaurant" resultMap="selectResultMap">
+        SELECT
+        RESTAURANT_CODE
+        , AREA_CODE
+        , RESTAURANT_NAME
+        , RESTAURANT_TYPE
+        , VEGETAIAN_STEP
+        , BEST_MENU
+        , OPEN_SCHEDULE
+        FROM TBL_RESTAURANT
+        WHERE OPEN_SCHEDULE = 'Y'
+        ORDER BY RESTAURANT_CODE
+    </select>
+
+    <select id="searchCategoryBySupRestaurant" resultMap="selectResultMap">
+        SELECT
+               RESTAURANT_CODE
+             , AREA_CODE
+             , RESTAURANT_NAME
+             , RESTAURANT_TYPE
+             , VEGETAIAN_STEP
+             , BEST_MENU
+             , OPEN_SCHEDULE
+          FROM TBL_RESTAURANT
+         WHERE OPEN_SCHEDULE = 'Y'
+
+        <choose>
+            <when test="value == '서울'">
+                AND AREA_CODE IN (1)
+            </when>
+            <when test="value == '경상도'">
+                AND AREA_CODE IN (2)
+            </when>
+            <when test="value == '제주'">
+                AND AREA_CODE IN (3)
+            </when>
+            <when test="value == '강원'">
+                AND AREA_CODE IN (4)
+            </when>
+            <otherwise>
+                AND AREA_CODE IN (5)
+            </otherwise>
+        </choose>
+        ORDER BY RESTAURANT_CODE
+    </select>
+
+    <insert id="insertCategory">
+        INSERT
+        INTO TBL_RESTAURANT
+        (
+        RESTAURANT_CODE
+        , AREA_CODE
+        , RESTAURANT_NAME
+        , RESTAURANT_TYPE
+        , VEGETAIAN_STEP
+        , BEST_MENU
+        , OPEN_SCHEDULE
+        )
+        VALUES
+        (
+        SEQ_RESTAURANT_CODE.NEXTVAL
+        , #{areaCode}
+        , #{name}
+        , #{type}
+        , #{step}
+        , #{menu}
+        , 'Y'
+        )
+    </insert>
+
+    <update id="updateCategory">
+        UPDATE TBL_RESTAURANT
+        SET
+        RESTAURANT_CODE = #{code}
+        , AREA_CODE = #{areaCode}
+        , RESTAURANT_NAME = #{name}
+        , RESTAURANT_TYPE = #{type}
+        , VEGETAIAN_STEP = #{step}
+        , BEST_MENU = #{menu}
+        WHERE RESTAURANT_CODE = #{code}
+    </update>
+
+    <delete id="deleteCategory">
+        DELETE
+        FROM TBL_RESTAURANT
+        WHERE RESTAURANT_CODE = #{code}
+    </delete>
+
+</mapper>
